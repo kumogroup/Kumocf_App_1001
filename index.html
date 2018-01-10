@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src * " />
 	<title>Kumo Café | Đặt đồ uống trực tuyến ở Biên Hòa</title>
 	<link href="img/logo-cafe-fav.png" rel="shortcut icon" />
 	<link rel='stylesheet' id='style-css'  href='css/style.css' type='text/css' media='all' />
@@ -11,11 +12,6 @@
 	<script type='text/javascript' src='js/main.js'></script>
 	<script>
 	jQuery(document).ready(function($){
-		window.onerror = function() {
-			var message = /* get error messages and put them here */;
-			alert(message);
-			return true;
-		};
 		var products = {};
 		// Initialize Firebase
 		var config = {
@@ -47,16 +43,22 @@
 		db.ref("products/").set(
 			_p
 		);*/
-
-		/*for(var i = 1; i<=12 ; i++){
-			db.ref("products/" + "0" + i).set({
-				name: "Trà sữa " + i,
-				regularprice: 16000,
-				saleprice: 16000,
-				addons: 0,
-				img: "123"
-			});
-		}*/
+		
+		/*var _s = {};
+		_s[01] = {name: "Arobi", address: "Đường Phan Trung", feeservice: 0, opentime: 8, closetime: 16, img: "11947435_889285777824208_7934237962476917435_n.jpg"};
+		_s[02] = {name: "Dè Cube", address: "2041 Nguyễn Ái Quốc, Tp.Biên Hòa", feeservice: 0, opentime: 8, closetime: 16, img: "21032359_1177333099077690_7240056086425834766_n.jpg"};
+		_s[03] = {name: "Gemini food & beverage", address: "1109 Phạm Văn Thuận, KP 1, P. Tân Mai", feeservice: 0, opentime: 8, closetime: 16, img: "23131225_811629689019363_428593579_o.jpg"};
+		_s[04] = {name: "Molicha", address: "45/223 Phạm Văn Thuận, P. Tân Mai, BH", feeservice: 0, opentime: 8, closetime: 16, img: "22894446_2095630550654843_5635732686289347050_n.jpg"};
+		_s[05] = {name: "Mr. Good Tea", address: "Lô 7, kp 7, đường Phan Trung", feeservice: 0, opentime: 8, closetime: 16, img: "mrgoodtea1.jpg"};
+		_s[06] = {name: "Paris Cake", address: "356E/5 Phan Trung, P.Tân Tiến", feeservice: 0, opentime: 8, closetime: 16, img: "22405684_1506710739384375_3071203406957635763_n.jpg"};
+		_s[07] = {name: "Sun Tea", address: "8/4, KP.10, P.Tân Biên, TP.Biên Hoà<br>58/1 KP.6, P.Tân Hoà, TP.Biên Hoà", feeservice: 0, opentime: 8, closetime: 16, img: "21752188_768904516648429_5675387581410334408_n.jpg"};
+		_s[08] = {name: "The Village", address: "6 Lê Quý Đôn, p.Tân Hiệp, tp.Biên Hòa<br>705 Phạm Văn Thuận, p.Tam Hiệp, tp.Biên Hòa", feeservice: 0, opentime: 8, closetime: 16, img: "25498059_885376021641492_362107985861930686_n.jpg"};
+		_s[09] = {name: "Uji Tea", address: "301 Đường 30/4,KP4, P Quyết Thắng", feeservice: 0, opentime: 8, closetime: 16, img: ""};
+		_s[10] = {name: "Uptown Tea", address: "218 Phan Trung", feeservice: 0, opentime: 8, closetime: 16, img: "20264633_881322035357057_8004006949076143026_n.jpg"};
+		
+		db.ref("stores/").set(
+			_s
+		);*/
 		
 		db.ref('/products/').once('value').then(function(snapshot){
 			var _noibat = $(".section.noibat .nb-scroll");
@@ -67,7 +69,7 @@
 				products[obj.key] = obj.val();
 				_product += "<div class='nb-item nb-" + obj.key + "'>";
 					_product += "<a href='#'>";
-						_product += "<div class='nb-img'><img src='https://kumocf.com/wp-content/uploads/" + obj.val().img +"'></div>";
+						_product += "<div class='nb-img'><img src='https://kumocf.com/wp-content/uploads/" + obj.val().img +"' data-rel='external'></div>";
 						_product += "<div class='nb-content'>";
 							_product += "<div class='nb-price'>" + obj.val().saleprice + "</div>";
 							_product += "<div class='nb-title'>" + obj.val().name + "</div>";
@@ -78,13 +80,40 @@
 				_noibat.append(_product);
 			});
 		}).then(function(){
-			//console.log(products);
-			$(".loading").animate({
-				opacity: 0
-			}, 500, function(){
-				$(this).remove();
-			});
+			kumo_load_stores();
 		});
+		
+		function kumo_load_stores(){
+			db.ref('/stores/').once('value').then(function(snapshot){
+				var _storewrap = $(".section.cuahang .ch-wrap");
+				var _store = "";
+				_storewrap.html("");
+				snapshot.forEach(function(obj){
+					_store = "";
+					_store += "<div class='ch-item ch-" + obj.key + "'>";
+						_store += "<a href='#'>";
+							_store += "<div class='ch-img'><img src='https://kumocf.com/wp-content/uploads/" + obj.val().img +"' data-rel='external'></div>";
+							_store += "<div class='ch-content'>";
+								_store += "<div class='ch-title'>" + obj.val().name + "</div>";
+								_store += "<div class='ch-address'>" + obj.val().address + "</div>";
+								_store += "<div class='ch-info'>";
+									_store += "<span class='feeservice' value='" + obj.val().feeservice + "'></span>";
+									_store += "<span class='status' value='1'></span>";
+								_store += "</div>";
+							_store += "</div>";
+						_store += "</a>";
+					_store += "</div>";
+					
+					_storewrap.append(_store);
+				});
+			}).then(function(){
+				$(".loading").animate({
+					opacity: 0
+				}, 500, function(){
+					$(this).remove();
+				});
+			});
+		}
 	});
 	</script>
 </head>
